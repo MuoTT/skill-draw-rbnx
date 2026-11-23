@@ -1,9 +1,9 @@
 # SPDX-License-Identifier: MIT
-"""PNG -> waypoints, backed by the Robonix XYZ SDK.
+"""PNG -> waypoints, backed by the vendored geometry package.
 
 Three tracing modes are available:
 
-``outline`` (SDK)
+``outline`` (geometry package)
     load_binary -> marching-squares ink outlines -> Douglas-Peucker.
     Correct for silhouettes and filled shapes; a drawn line becomes two
     parallel boundary sides.
@@ -21,17 +21,16 @@ Both skeleton modes join neighbouring fragments whose endpoints are within
 ``bridge_px`` pixels before simplification, so small raster gaps become a
 short connecting stroke instead of a pen lift (dashed output).
 
-The SDK (``SDK/robonix_sdk/{image,trajectory}.py``) still owns loading,
-thresholding, paper fitting and the outline geometry. ``trace.py`` owns
-the skeleton/line-art algorithms.
+The geometry package (``xyz_draw/geometry/{image,trajectory}.py``) still
+owns loading, thresholding, paper fitting and the outline geometry.
+``trace.py`` owns the skeleton/line-art algorithms.
 
-Orientation: the SDK maps image row 0 to the lowest y (the paper's bottom
-edge), so without ``flip_y`` the drawing is vertically mirrored relative
-to the PNG as displayed. Pass ``flip_y=True`` for the screen orientation.
-All modes use the same placement and flip rules.
+Orientation: the geometry package maps image row 0 to the lowest y (the
+paper's bottom edge), so without ``flip_y`` the drawing is vertically
+mirrored relative to the PNG as displayed. Pass ``flip_y=True`` for the
+screen orientation. All modes use the same placement and flip rules.
 
-Requires numpy + Pillow (see ``requirements.txt``). They are import-time
-dependencies of the SDK package itself.
+Requires numpy + Pillow (see ``requirements.txt``).
 """
 from __future__ import annotations
 
@@ -39,7 +38,8 @@ from dataclasses import dataclass
 
 from . import trace as trace_mod
 from .plan import PlanError, Workspace
-from .sdk_path import image_module, trajectory_module
+from .geometry import image as image_module
+from .geometry import trajectory as trajectory_module
 
 TRACE_MODES = ("outline", "skeleton", "lineart")
 

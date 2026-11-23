@@ -1,16 +1,16 @@
-# skill-hdu-draw-rbnx
+# skill-draw-rbnx
 
 Robonix **skill** for declarative scene drawing, prompt-to-image drawing,
 debug previews, and traced image drawing. It owns
 `robonix/skill/plot/*` and turns JSON scenes, generated PNGs, or existing
 images into pen-up/down waypoints for the plotter primitive.
 
-Catalog name: `robonix.skill.xyz.draw`.
+Catalog name: `robonix.skill.draw`.
 
 The skill never talks TCP or PLC. It resolves the plotter primitive through
 Atlas and reuses the repository [`SDK/`](../../../SDK) for image geometry;
 `skeleton` and `lineart` tracing live in [`xyz_draw/trace.py`](xyz_draw/trace.py).
-Text writing lives in [`skill-hdu-text-rbnx`](../skill-hdu-text-rbnx).
+Text writing lives in [`skill-text-rbnx`](../skill-text-rbnx).
 
 ## Capability surface
 
@@ -262,7 +262,7 @@ if they are missing it returns `Deferred` and retries on the next MCP call.
 ## Layout
 
 ```text
-skill-hdu-draw-rbnx/
+skill-draw-rbnx/
 ├── package_manifest.yaml
 ├── capabilities/
 │   ├── driver.v1.toml
@@ -386,7 +386,7 @@ Suggested checks, in order:
 ## Known limits
 
 - Scenes are line art only: no fills, colours, gradients, or text. Use
-  `skill-hdu-text-rbnx` for text.
+  `skill-text-rbnx` for text.
 - `draw_scene` ignores `width_mm` for plotting; the physical pen defines the
   stroke width.
 - `outline` traces the ink boundary, so line art becomes two parallel sides.
