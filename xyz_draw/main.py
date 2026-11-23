@@ -31,7 +31,8 @@ primitive over gRPC; it never touches the PLC or the TCP protocol.
 
 Coordinate conventions come from the plotter primitive: millimetres, paper
 origin at the lower-left corner, +X right, +Y up. The drawable area and
-pen heights are read from the primitive's PlotterStatus on activation.
+pen heights are read from ``robonix/primitive/plotter/geometry`` once on
+activation (falling back to the configured workspace).
 """
 from __future__ import annotations
 
@@ -1347,7 +1348,7 @@ def activate():
     )
     _state["client"] = client
     try:
-        geo = client.get_status()
+        geo = client.get_geometry()
         # Refresh both the workspace and the canvas default size, which is
         # derived from the drawable area reported by the primitive.
         _state["config"] = dataclasses.replace(
@@ -1364,8 +1365,20 @@ def activate():
             "geometry from primitive: x_max=%.1f y_max=%.1f z_up=%.2f z_down=%.2f",
             geo.x_max, geo.y_max, geo.z_up, geo.z_down,
         )
-    except PrimitiveCallError as exc:
-        log.warning("cannot read primitive geometry; keeping placeholder workspace: %s", exc)
+    except Exception as exc:  # noqa: BLE001 - activation must never raise
+        # Degrade instead of failing: a provider stuck in ERROR cannot be
+        # activated again until the whole stack restarts.
+        usable = (
+            config.workspace.x_max > config.workspace.x_min
+            and config.workspace.y_max > config.workspace.y_min
+        )
+        if usable:
+            log.warning("geometry unavailable; using configured workspace: %s", exc)
+        else:
+            log.error(
+                "geometry unavailable and no workspace configured; "
+                "drawing will fail until one is set: %s", exc,
+            )
     _state["active"] = True
     log.info(
         "activated: trajectory=%s home=%s",

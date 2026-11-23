@@ -304,7 +304,7 @@ constraints are in [`config.spec`](config.spec).
 
 ```yaml
 # Drawable area and pen heights are NOT configured here. They are read
-# from the plotter primitive's PlotterStatus on activation, so this skill
+# from the plotter primitive's plotter geometry contract on activation, so this skill
 # carries no machine-specific numbers and works on any sized rig.
 image_dir: images          # read root (deployment-root relative)
 output_dir: ""             # empty -> same as image_dir; the only write root
