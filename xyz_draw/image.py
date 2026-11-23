@@ -223,20 +223,11 @@ def image_to_waypoints_ex(
     except PlanError as exc:
         raise ImageError(str(exc)) from exc
 
-    try:
-        sdk_image = image_module()
-        sdk_traj = trajectory_module()
-    except ImportError as exc:
-        raise ImageError(
-            "draw_image needs numpy and Pillow; install with: "
-            "pip install -r requirements.txt"
-        ) from exc
-
     if threshold is not None and float(threshold) <= 0.0:
         threshold = None
     try:
         if mode == "lineart":
-            gray = sdk_image.load_gray(image_path)
+            gray = image_module.load_gray(image_path)
             binary = trace_mod.lineart_binary(
                 gray,
                 sigma=float(lineart_sigma),
@@ -244,7 +235,7 @@ def image_to_waypoints_ex(
                 invert=bool(invert),
             )
         else:
-            binary = sdk_image.load_binary(
+            binary = image_module.load_binary(
                 image_path,
                 threshold=None if threshold is None else float(threshold),
                 invert=bool(invert),
@@ -265,7 +256,7 @@ def image_to_waypoints_ex(
         offset_y = float(offset[1])
     else:
         try:
-            pixel_to_mm, offset_x, offset_y, _w, _h = sdk_traj.fit_to_paper(
+            pixel_to_mm, offset_x, offset_y, _w, _h = trajectory_module.fit_to_paper(
                 width_px,
                 height_px,
                 paper_w_mm=paper_w,
@@ -295,7 +286,7 @@ def image_to_waypoints_ex(
         # Offsets are workspace-relative; the workspace shift is applied
         # to the finished points. It must not go through PlotConfig
         # because a flip would negate it as well.
-        plot = sdk_traj.PlotConfig(
+        plot = trajectory_module.PlotConfig(
             pixel_to_mm=pixel_to_mm,
             offset_x=offset_x,
             offset_y=offset_y,
@@ -305,7 +296,7 @@ def image_to_waypoints_ex(
             flip_y=bool(flip_y),
             simplify_px=float(simplify_px),
         )
-        points = sdk_traj.to_waypoints(binary, plot)
+        points = trajectory_module.to_waypoints(binary, plot)
     else:
         points = _skeleton_waypoints(
             binary,

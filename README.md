@@ -251,8 +251,7 @@ if they are missing it returns `Deferred` and retries on the next MCP call.
 
 ## Driver-init lifecycle
 
-`scripts/start.sh` exports `ROBONIX_XYZ_SDK` and execs
-`python3 -m xyz_draw.main`.
+`scripts/start.sh` execs `python3 -m xyz_draw.main`.
 
 1. `CMD_INIT`: parse and validate config, image roots, and preview settings;
    no primitive connection.
@@ -285,7 +284,7 @@ skill-draw-rbnx/
 │   ├── paths.py                        # image roots and preview naming
 │   ├── plan.py                         # workspace validation and bounds
 │   ├── primitive_client.py             # Atlas discovery + gRPC calls
-│   └── sdk_path.py                     # locates the repository SDK
+│   └── geometry/                       # vendored image + trajectory (image, trajectory)
 ├── scripts/{build,start}.sh
 ├── tests/                              # pure-unit tests, no runtime needed
 ├── config.spec
@@ -304,13 +303,9 @@ Deployment config lives in the `xyz_draw` skill `config` block of
 constraints are in [`config.spec`](config.spec).
 
 ```yaml
-workspace:
-  x_min: 0.0
-  x_max: 180.0
-  y_min: 0.0
-  y_max: 150.0
-  z_up: -46.0
-  z_down: -50.0
+# Drawable area and pen heights are NOT configured here. They are read
+# from the plotter primitive's PlotterStatus on activation, so this skill
+# carries no machine-specific numbers and works on any sized rig.
 image_dir: images          # read root (deployment-root relative)
 output_dir: ""             # empty -> same as image_dir; the only write root
 debug: true                # checked-in deployment value; config.spec default false
