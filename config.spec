@@ -6,13 +6,13 @@
 # config as documented in each .srv.
 #
 # Everything is millimetres, matching the SDK and the PLC. Text writing lives
-# in a separate package (skill-hdu-text-rbnx) and has its own config.
+# in a separate package (skill-text-rbnx) and has its own config.
 
 config:
   # Workspace geometry (drawable area + pen heights) is authoritative in the
-  # plotter primitive and is read from the plotter geometry contract on activation. It is
-  # NOT configured here; any `workspace:` mapping passed in config is ignored
-  # in favour of the primitive's reported geometry.
+  # plotter primitive and is read from its `geometry` contract on activation.
+  # It is NOT configured here; a `workspace:` mapping in config is only a
+  # fallback used when that contract is unreachable (the skill logs an error).
 
   # ── motion profile ─────────────────────────────────────────────────
   # Speed, acceleration, deceleration, and jerk are NOT skill config:

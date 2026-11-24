@@ -152,7 +152,7 @@ homing after a successful job. Neither changes the profile.
 ## Coordinates
 
 - Units: millimetres; paper origin at the lower-left, +X right, +Y up.
-- Drawable area and pen heights are reported by the plotter primitive's
-  the `geometry` contract on activation; this skill hardcodes none of them.
+- Drawable area and pen heights are reported by the `geometry` contract on
+  activation; this skill hardcodes none of them.
 - The skill validates every waypoint against the workspace before moving; an
   out-of-bounds plan returns `success=false` with no motion.
